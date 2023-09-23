@@ -34,9 +34,9 @@ export class CalendrierrendezvousComponent implements OnInit {
 
   calendarOptions: CalendarOptions = {};
   calendarEvents: any[] = [];
-  rdvForms: CreateAppoitment[] = []; // Votre liste de rendez-vous
+  rdvForms: CreateAppoitment[] = []; //  liste de rendez-vous
 
-       // Stockez le tableau des dates des rendez-vous
+       // On Stocke le tableau des dates des rendez-vous
 
    datesWithAppointments: string[] = [];
 
@@ -63,14 +63,14 @@ export class CalendrierrendezvousComponent implements OnInit {
   
     //tableau des rdv
 
-    // const loggedInPatientName = localStorage.getItem('listePat');
-     const loggedInPatientName = localStorage.getItem('ListePat');
+    this.rdvService.getAppoitment();
 
-    // Parcourez la liste de rendez-vous et ajoutez-les au calendrier un par un
+    // On parcoure la liste de rendez-vous et on ajoute - les au calendrier un par un
     for (const rdv of this.rdvForms) {
       // const newAppointment = new CreateAppoitment();
       this.calendarEvents.push({
         title: rdv.motif,
+        
         // title: `Rdv avec ${patient}`,
         start: rdv.date + 'T' + rdv.time,
       });
@@ -78,7 +78,7 @@ export class CalendrierrendezvousComponent implements OnInit {
 
       this.datesWithAppointments.push(rdv.date);
 
-          // Ajoutez une classe CSS personnalisée pour les jours avec rendez-vous
+          // Ajout de classe CSS personnalisée pour les jours avec rendez-vous
     const date = rdv.date + 'T00:00:00'; // Utilisez la date du rendez-vous
     const dayCell = document.querySelector(`.fc-day[data-date="${date}"]`);
     if (dayCell) {
@@ -104,11 +104,15 @@ export class CalendrierrendezvousComponent implements OnInit {
 
   ngOnInit(): void {
     this.medecinsSelect = this.medecinService.getMedecin(); 
+    this.rdvService.getAppoitment();
    
     this.calendarOptions = {      
       plugins: [dayGridPlugin],
       initialView: 'dayGridMonth',
       weekends: true,
+      eventBackgroundColor:'#38B198',
+      eventDisplay:'#38B198',
+      eventClick: (this.openDetails),
       locale: frLocale,
       events: this.calendarEvents,
      
@@ -179,6 +183,9 @@ export class CalendrierrendezvousComponent implements OnInit {
         width: '650px',
         height:'490px',
       });
+      // if (this.calendarOptions) { // Vérifiez si this.calendar est défini
+      //   this.calendarEvents.values.bind(this.openDetails())// Appelez la méthode open
+      // }
     }
 
 

@@ -50,7 +50,7 @@ export class CreationrendezvousComponent implements OnInit {
   
   ngOnInit(): void {
     this.medecinsSelect = this.medecinService.getMedecin(); 
-
+    this.rdvService.getAppoitment();
   }
 
 
@@ -63,9 +63,10 @@ export class CreationrendezvousComponent implements OnInit {
         'Ajouter avec succès!',
         'Les données sont enrégistrés avec succès!',
         'success'
-      )
-      this.rdvForm.reset();
-      this.route.navigate(['/liste-rdv']);
+        )
+        this.rdvService.getAppoitment();
+        this.rdvForm.reset();
+        this.route.navigate(['/liste-rdv']);
       
     }
      

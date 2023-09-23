@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router, RouterStateSnapshot } from '@angular/router';
 import { ShowelementService } from './services/showelement.service';
 import { LoginPatientService } from './services/login-patient.service';
 import Swal from 'sweetalert2';
 import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { CreationrendezvousComponent } from './creationrendezvous/creationrendezvous.component';
 
 
 
@@ -34,7 +36,10 @@ export class AppComponent implements OnInit {
   isLogAccueilPage: boolean = false;
 
 
-  constructor(private router: Router, private showElementService : ShowelementService, private connect : LoginPatientService) {
+  isUserLoggedIns : boolean = false;
+
+
+  constructor(private router: Router, private dialog : MatDialog, private showElementService : ShowelementService, private connect : LoginPatientService) {
   this.isVisible = false;
   this.router.events.subscribe((event) => {
     if (event instanceof NavigationEnd) {
@@ -80,6 +85,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.connect.isUserLoggedIn = false; 
+    const loggedIn = localStorage.getItem('loggedInPatient');
+    if(loggedIn){
+   this.isUserLoggedIns = loggedIn === 'true';
+  }
+  this.isUserLoggedIns = loggedIn === 'false';
     
   }
 
@@ -125,8 +135,20 @@ export class AppComponent implements OnInit {
       })
   }
 
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+    const token = localStorage.getItem('loggedInPatient');
+    if (token) {
+      return true; // Autoriser l'accès à la route
+    } else {
+      this.router.navigate(['/patient-login']);
+      return false; // Rediriger vers la page de connexion
+    }
+  }
+
 
   logoutPatient() {
+    localStorage.removeItem('loggedInPatient');
+
     Swal.fire({
       title: 'Voulez vous vraiment vous déconnecter ?',
       icon: 'warning',
@@ -155,15 +177,14 @@ export class AppComponent implements OnInit {
 
 
  
+  openDialog() {
+    const dialogRef = this.dialog.open(CreationrendezvousComponent,{
+      width: '650px',
+      height:'570px',
+    });
 
 
-
-
-  // constructor(private route: ActivatedRoute) {
-  //   this.route.url.subscribe(urlSegments => {
-  //     this.isLoginPage = urlSegments[0]?.path === '/admin-accueil';
-  //   });
-  // }
+  }
 
 
 }
